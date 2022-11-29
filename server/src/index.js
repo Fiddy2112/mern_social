@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const db = require("./database/db.js");
 const userRouter = require("./routes/users.js");
 const authRouter = require("./routes/auth.js");
+const postRouter = require("./routes/post.js");
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -21,6 +22,7 @@ app.use(morgan("common"));
 //routers
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/post", postRouter);
 
 app.listen(port, () => {
   // connected to mongoDb
