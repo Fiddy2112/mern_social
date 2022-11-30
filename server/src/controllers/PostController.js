@@ -1,4 +1,5 @@
 const Post = require("../models/post");
+const User = require("../models/user");
 
 class PostController {
   /**
@@ -151,14 +152,14 @@ class PostController {
 
   async getAllPost(req, res) {
     try {
-      const currentUser = await Post.findById(req.body.userId);
-      const userPost = await Post.find({ userId: currentUser._id });
+      const currentUser = await User.findById(req.body.userId);
+      const userPosts = await Post.find({ userId: currentUser._id });
       const friendPosts = await Promise.all(
         currentUser.followings.map((friendId) => {
-          return Post.find((userId = friendId));
+          return Post.find({ userId: friendId });
         })
       );
-      res.json(userPost.concat(...friendPosts));
+      res.json(userPosts.concat(...friendPosts));
     } catch (err) {
       console.log(err);
       res.status(500).json({
