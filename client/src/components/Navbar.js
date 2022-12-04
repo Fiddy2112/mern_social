@@ -7,9 +7,8 @@ import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNone
 const NavContainer = styled.div`
   height: 60px;
   width: 100%;
-
-  background-color: #fff;
   position: sticky;
+  z-index: 1000;
   top: 0;
 `;
 
@@ -18,6 +17,8 @@ const NavWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 0.5px solid #ced6e0;
+  background-color: #f1f2f6;
 `;
 
 const NavTop = styled.div`
@@ -27,6 +28,7 @@ const Logo = styled.h1`
   font-size: 16px;
   font-weight: 500;
   color: #ff6b81;
+  padding-left: 20px;
 `;
 const NavCenter = styled.div`
   flex: 1;
@@ -40,6 +42,7 @@ const NavSearchContainer = styled.div`
   border: 0.5px solid #a4b0be;
   max-width: 350px;
   border-radius: 10px;
+  background-color: #fff;
 `;
 
 const Input = styled.input`
@@ -133,7 +136,7 @@ function Navbar() {
               <NavIconBadge>1</NavIconBadge>
             </NavIcon>
           </NavIcons>
-          <UserImg src="../assets/person/person1.jpeg" alt="" />
+          <UserImg src="/assets/person/person1.jpeg" alt="" />
         </NavRight>
       </NavWrapper>
     </NavContainer>
