@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
+import { StateContext, useProvider } from "../../context/contextProvider";
+import { useNavigate } from "react-router-dom";
 
 const LoginContainer = styled.div`
   width: 100vw;
@@ -41,7 +44,7 @@ const LoginRight = styled.div`
   justify-content: center;
 `;
 
-const LoginForm = styled.div`
+const LoginForm = styled.form`
   height: 300px;
   padding: 20px;
   background-color: white;
@@ -84,8 +87,9 @@ const LoginForgotten = styled.span`
   padding: 10px;
 `;
 
-const RegisterButton = styled.button`
+const RegisterButton = styled.a`
   width: 60%;
+  display: flex;
   align-self: center;
   height: 50px;
   border-radius: 5px;
@@ -94,7 +98,9 @@ const RegisterButton = styled.button`
   color: #2ed573;
   font-size: 20px;
   font-weight: 500;
-  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
 
   &:hover {
     color: #fff;
@@ -103,6 +109,39 @@ const RegisterButton = styled.button`
 `;
 
 function Login() {
+  //local state
+  const [inputForm, setInputForm] = useState({
+    email: "",
+    password: "",
+  });
+  const { email, password } = inputForm;
+
+  //router
+  const navigate = useNavigate();
+
+  //context
+  const { loginUser } = useContext(StateContext);
+
+  const onChangeLoginForm = (e) => {
+    setInputForm({
+      ...inputForm,
+      [e.target.id]: e.target.value,
+    });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const loginData = await loginUser(inputForm);
+      console.log(loginData);
+      if (loginData.success) {
+        navigate("/");
+      } else {
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <LoginContainer>
       <LoginWrapper>
@@ -113,12 +152,24 @@ function Login() {
           </LoginDesc>
         </LoginLeft>
         <LoginRight>
-          <LoginForm>
-            <LoginInput placeholder="Email" />
-            <LoginInput placeholder="Password" />
+          <LoginForm onSubmit={handleSubmit}>
+            <LoginInput
+              placeholder="Email"
+              type="email"
+              id="email"
+              value={email}
+              onChange={onChangeLoginForm}
+            />
+            <LoginInput
+              placeholder="Password"
+              type="password"
+              id="password"
+              value={password}
+              onChange={onChangeLoginForm}
+            />
             <LoginButton>Log in</LoginButton>
             <LoginForgotten>Don't you have account?</LoginForgotten>
-            <RegisterButton>Create a new account</RegisterButton>
+            <RegisterButton href="/signup">Create a new account</RegisterButton>
           </LoginForm>
         </LoginRight>
       </LoginWrapper>

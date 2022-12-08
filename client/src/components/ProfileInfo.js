@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
+import { StateContext } from "../context/contextProvider";
 
 const ProfileInfoContainer = styled.div`
   display: flex;
@@ -59,23 +60,32 @@ const ProfileFollowingName = styled.span`
 `;
 
 function ProfileInfo() {
+  const {
+    state: { user },
+  } = useContext(StateContext);
   return (
     <ProfileInfoContainer>
       <ProfileInfoWrapper>
         <ProfileInfoTitle>Intro</ProfileInfoTitle>
         <ProfileInfoItem>
           <ProfileInfoKey>From:</ProfileInfoKey>
-          <ProfileInfoValue>NY</ProfileInfoValue>
+          <ProfileInfoValue>{user.from}</ProfileInfoValue>
         </ProfileInfoItem>
 
         <ProfileInfoItem>
           <ProfileInfoKey>Lives in:</ProfileInfoKey>
-          <ProfileInfoValue>ASyyd</ProfileInfoValue>
+          <ProfileInfoValue>{user.city}</ProfileInfoValue>
         </ProfileInfoItem>
 
         <ProfileInfoItem>
           <ProfileInfoKey>Relationship:</ProfileInfoKey>
-          <ProfileInfoValue>Single</ProfileInfoValue>
+          <ProfileInfoValue>
+            {user.relationship === 1
+              ? "Single"
+              : user.relationship === 2
+              ? "Married"
+              : "-"}
+          </ProfileInfoValue>
         </ProfileInfoItem>
       </ProfileInfoWrapper>
 

@@ -86,8 +86,9 @@ const SignupButton = styled.button`
 //   padding: 10px;
 // `;
 
-const LoginButton = styled.button`
+const LoginButton = styled.a`
   width: 60%;
+  display: flex;
   align-self: center;
   height: 50px;
   border-radius: 5px;
@@ -96,7 +97,9 @@ const LoginButton = styled.button`
   color: #2ed573;
   font-size: 20px;
   font-weight: 500;
-  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
 
   &:hover {
     color: #fff;
@@ -114,11 +117,11 @@ function Signup() {
             <SignupInput placeholder="Email" />
             <SignupInput placeholder="Password" />
             <SignupButton>Log in</SignupButton>
-            <LoginButton>Do you have account</LoginButton>
+            <LoginButton href="/login">Your have account</LoginButton>
           </SignupForm>
         </SignupLeft>
         <SignupRight>
-          <SignupLogo>Sign up</SignupLogo>
+          <SignupLogo>signup</SignupLogo>
           <SignupDesc>It's quick and easy.</SignupDesc>
         </SignupRight>
       </SignupWrapper>

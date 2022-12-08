@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import Feed from "../../components/Feed";
 import Navbar from "../../components/Navbar";
 import ProfileInfo from "../../components/ProfileInfo";
 import RightBar from "../../components/RightBar";
 import SideBar from "../../components/SideBar";
+import { StateContext } from "../../context/contextProvider";
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -66,6 +67,10 @@ const ProfileBottom = styled.div`
 `;
 
 function Profile() {
+  const {
+    state: { user },
+  } = useContext(StateContext);
+
   return (
     <>
       <Navbar />
@@ -74,11 +79,11 @@ function Profile() {
         <ProfileWrapper>
           <ProfileTop>
             <ProfileCover>
-              <ProfileCoverImg src="assets/post/post5.jpeg" alt="coverImg" />
-              <ProfileImg src="assets/person/person5.jpg" alt="userImg" />
+              <ProfileCoverImg src={user.coverImg} alt="coverImg" />
+              <ProfileImg src={user.profileImg} alt="userImg" />
               <ProfileTitle>
-                <ProfileName>Vincenzo</ProfileName>
-                <ProfileDesc>Welcome to my profile</ProfileDesc>
+                <ProfileName>{user.username}</ProfileName>
+                <ProfileDesc>{user.desc}</ProfileDesc>
               </ProfileTitle>
             </ProfileCover>
           </ProfileTop>

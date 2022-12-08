@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
-import { Users } from "../data/Data";
+import axios from "axios";
+import moment from "moment";
+import { Link } from "react-router-dom";
+import { StateContext } from "../context/contextProvider";
+// import { Users } from "../data/Data";
 
 const PostContainer = styled.div`
   margin-top: 20px;
@@ -130,28 +134,57 @@ const PostIconName = styled.span`
 `;
 
 function Post({ post }) {
-  const [like, setLike] = useState(post.like);
+  const [like, setLike] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(false);
+  const [userState, setUserState] = useState({});
 
-  console.log("like", like);
-  console.log("isLiked", isLiked);
+  //context
+  const {
+    state: { user },
+  } = useContext(StateContext);
 
-  const likeHandler = () => {
+  // console.log("like", like);
+  // console.log("isLiked", isLiked);
+
+  // const user = Users.filter((u) => u.id === post.userId);
+  // console.log(user);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const res = await axios.get(
+        `
+        http://localhost:5000/api/v1/user?userId=${post.userId}
+        `
+      );
+      setUserState(res.data.others);
+    };
+    getUser();
+  }, [post.userId]);
+
+  const likeHandler = async () => {
+    try {
+      await axios.put(`http://localhost:5000/api/v1/post/${post._id}/likes`, {
+        userId: user._id,
+      });
+    } catch (err) {}
     setLike(isLiked ? like - 1 : like + 1);
     setIsLiked(!isLiked);
   };
 
-  const user = Users.filter((u) => u.id === post.userId);
-  console.log(user);
   return (
     <PostContainer>
       <PostWrapper>
         <PostTop>
           <TopLeft>
-            <TopProfileImg src={user[0].profilePicture} alt="profile_img" />
+            <Link to={`profile/${userState.username}`}>
+              <TopProfileImg
+                src={userState.profileImg || "assets/avatar-female.png"}
+                alt="profile_img"
+              />
+            </Link>
             <TopTitle>
-              <TopName>{user[0].username}</TopName>
-              <TopDate>{post.date}</TopDate>
+              <TopName>{userState.username}</TopName>
+              <TopDate>{moment().startOf(post.createAt).fromNow()}</TopDate>
             </TopTitle>
           </TopLeft>
           <TopRight>
@@ -160,13 +193,17 @@ function Post({ post }) {
         </PostTop>
         <PostCenter>
           <PostText>{post.desc}</PostText>
-          <PostImg src={post.photo} alt="post_img" />
+          <PostImg src={post?.img || ""} alt="post_img" />
         </PostCenter>
         <PostBottom>
           <PostLike>
             <PostLikeLeft>
-              <ThumbUpOutlinedIcon style={{ color: "#1e90ff" }} />
-              {!isLiked ? "" : "You, and"} {like.post} others
+              {!isLiked ? (
+                ""
+              ) : (
+                <ThumbUpOutlinedIcon style={{ color: "#1e90ff" }} />
+              )}
+              {!isLiked ? "" : "You"} {like}
             </PostLikeLeft>
             <PostLikeRight>{post.comment} comments</PostLikeRight>
           </PostLike>

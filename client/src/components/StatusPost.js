@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
 import PhotoLibraryOutlinedIcon from "@mui/icons-material/PhotoLibraryOutlined";
 import EmojiEmotionsOutlinedIcon from "@mui/icons-material/EmojiEmotionsOutlined";
+import { useState } from "react";
+import axios from "axios";
+import { StateContext } from "../context/contextProvider";
+import { useRef } from "react";
 
 const StatusPostContainer = styled.div`
   width: 100%;
@@ -12,7 +16,7 @@ const StatusPostContainer = styled.div`
   -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
 `;
 
-const StatusPostWrapper = styled.div`
+const StatusPostWrapper = styled.form`
   padding: 10px;
 `;
 
@@ -88,22 +92,61 @@ const StatusPostIcon = styled.div`
   font-size: large;
 `;
 
-const StatusPostText = styled.span`
+const StatusPostText = styled.label`
   font-size: 16px;
   font-weight: 500;
+  cursor: pointer;
 `;
 
 function StatusPost() {
+  const {
+    state: { user },
+  } = useContext(StateContext);
+
+  const desc = useRef();
+
+  const [file, setFile] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newPost = {
+      userId: user._id,
+      desc: desc.current.value,
+    };
+    if (file) {
+      const data = new FormData();
+      const fileName = Date.now() + file.name;
+      data.append("file", file);
+      data.append("name", fileName);
+      newPost.img = fileName;
+      try {
+        await axios.post("http://localhost:5000/api/v1/upload", data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    try {
+      await axios.post("http://localhost:5000/api/v1/post", newPost);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <StatusPostContainer>
-      <StatusPostWrapper>
+      <StatusPostWrapper onSubmit={handleSubmit}>
         <StatusPostTop>
-          <StatusPostImg src="/assets/person/person3.jpg" alt />
+          <StatusPostImg
+            src={user.profileImg || "assets/avatar-female.png"}
+            alt
+          />
           <StatusPostInput
             type="text"
-            placeholder="Kai, What's on your mind ?"
+            placeholder={`${user.username}, What's on your mind ?`}
+            ref={desc}
           />
-          <StatusPostButton>Share</StatusPostButton>
+          <StatusPostButton type="submit">Share</StatusPostButton>
         </StatusPostTop>
         <StatusPostHr />
         <StatusPostBottom>
@@ -125,7 +168,14 @@ function StatusPost() {
                   style={{ color: "#2ed573" }}
                 />
               </StatusPostIcon>
-              <StatusPostText>Photo/video</StatusPostText>
+              <StatusPostText htmlFor="file">Photo/video</StatusPostText>
+              <input
+                type="file"
+                id="file"
+                accept=".png,.jpeg,.jpg"
+                onChange={(e) => e.target.files[0]}
+                hidden
+              />
             </StatusPostItem>
 
             <StatusPostItem>

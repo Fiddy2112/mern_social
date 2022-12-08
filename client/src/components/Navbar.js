@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import { StateContext } from "../context/contextProvider";
+import { Link } from "react-router-dom";
 
 const NavContainer = styled.div`
   height: 60px;
@@ -106,11 +108,18 @@ const UserImg = styled.img`
 `;
 
 function Navbar() {
+  const {
+    state: { user },
+  } = useContext(StateContext);
+
+  // console.log(user);
   return (
     <NavContainer>
       <NavWrapper>
         <NavTop>
-          <Logo>Social App</Logo>
+          <Link to="/" style={{ textDecoration: "none" }}>
+            <Logo>Social App</Logo>
+          </Link>
         </NavTop>
         <NavCenter>
           <NavSearchContainer>
@@ -136,7 +145,9 @@ function Navbar() {
               <NavIconBadge>1</NavIconBadge>
             </NavIcon>
           </NavIcons>
-          <UserImg src="/assets/person/person1.jpeg" alt="" />
+          <Link to={`profile/${user.username}`}>
+            <UserImg src={user.profileImg} alt="profile_img" />
+          </Link>
         </NavRight>
       </NavWrapper>
     </NavContainer>

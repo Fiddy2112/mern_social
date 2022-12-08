@@ -60,7 +60,7 @@ function RightBar() {
           {Users.map((user) => (
             <RightBarFriend key={user.id}>
               <RightBarProfileImgContainer>
-                <RightBarProfileImg src={user.profilePicture} alt="" />
+                <RightBarProfileImg src={user.profilePicture} alt="userOnl" />
                 <RightBarStatus></RightBarStatus>
               </RightBarProfileImgContainer>
               <RightBarName>{user.username}</RightBarName>

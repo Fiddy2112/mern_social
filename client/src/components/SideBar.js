@@ -132,7 +132,7 @@ function SideBar() {
         <SideBarHR />
         <SideBarFriendList>
           {Users.map((user) => (
-            <Friend user={user} />
+            <Friend user={user} key={user.id} />
           ))}
         </SideBarFriendList>
       </SideBarWrapper>

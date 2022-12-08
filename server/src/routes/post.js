@@ -7,6 +7,7 @@ router.put("/:id", PostController.update);
 router.delete("/:id", PostController.delete);
 router.put("/:id/likes", PostController.likePost);
 router.get("/:id", PostController.getPost);
-router.get("/timeline/all", PostController.getAllPost);
+router.get("/timeline/:userId", PostController.getTimePost);
+router.get("/profile/:username", PostController.getAllPost);
 
 module.exports = router;

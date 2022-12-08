@@ -112,6 +112,29 @@ class AuthController {
       });
     }
   }
+
+  /**
+   * @route POST api/v1/auth/login
+   * @desc CHECK if user is logged in
+   * @access Public
+   */
+
+  async logged(req, res) {
+    try {
+      const user = await User.findById(req.id).select("-password");
+      if (!user)
+        return res
+          .status(400)
+          .json({ success: false, message: "User not found" });
+      res.json({ success: true, user });
+    } catch (err) {
+      console.log(err);
+      res.status(404).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  }
 }
 
 module.exports = new AuthController();
