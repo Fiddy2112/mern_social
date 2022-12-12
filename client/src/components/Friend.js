@@ -17,11 +17,11 @@ const SideBarFriendImg = styled.img`
 
 const SideBarFriendName = styled.span``;
 
-function Friend({ user }) {
+function Friend({ friend }) {
   return (
-    <SideBarFriend key={user.id}>
-      <SideBarFriendImg src={user.profilePicture} alt="sidebar_img" />
-      <SideBarFriendName>{user.username}</SideBarFriendName>
+    <SideBarFriend>
+      <SideBarFriendImg src={friend.profileImg} alt="sidebar_img" />
+      <SideBarFriendName>{friend.username}</SideBarFriendName>
     </SideBarFriend>
   );
 }

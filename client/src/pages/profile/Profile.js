@@ -1,4 +1,6 @@
-import React, { useContext } from "react";
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import { useRef } from "react";
 import styled from "styled-components";
 import Feed from "../../components/Feed";
 import Navbar from "../../components/Navbar";
@@ -51,6 +53,26 @@ const ProfileTitle = styled.div`
   bottom: 25px;
 `;
 
+const ButtonFollow = styled.button`
+  padding: 10px 20px;
+  position: absolute;
+  right: 50px;
+  bottom: 35px;
+  border-radius: 5px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  border: 0.5px solid #2ed573;
+  color: #2ed573;
+  background-color: #fff;
+
+  &:hover {
+    background-color: #2ed573;
+    color: #fff;
+  }
+`;
+
 const ProfileName = styled.h4`
   font-size: 30px;
   margin: 10px;
@@ -66,10 +88,44 @@ const ProfileBottom = styled.div`
   padding: 10px 0px;
 `;
 
-function Profile() {
+function Profile({ user }) {
+  const [followed, setFollowed] = useState(false);
+
   const {
-    state: { user },
+    state: { user: currentUser, dispatch },
   } = useContext(StateContext);
+  console.log(currentUser);
+
+  useEffect(() => {
+    setFollowed(currentUser.followings.includes(user?._id));
+  }, [currentUser, user._id]);
+
+  const handleClick = async () => {
+    try {
+      if (followed) {
+        await axios.put(
+          `http://localhost:5000/api/v1/user/${user._id}/unfollow`,
+          { userId: currentUser._id }
+        );
+        dispatch({
+          type: "UN_FOLLOW",
+          payload: user._id,
+        });
+      } else {
+        await axios.put(
+          `http://localhost:5000/api/v1/user/${user._id}/follow`,
+          { userId: currentUser._id }
+        );
+        dispatch({
+          type: "FOLLOW",
+          payload: user._id,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    setFollowed(!followed);
+  };
 
   return (
     <>
@@ -85,6 +141,11 @@ function Profile() {
                 <ProfileName>{user.username}</ProfileName>
                 <ProfileDesc>{user.desc}</ProfileDesc>
               </ProfileTitle>
+              {user.username !== currentUser.username && (
+                <ButtonFollow onClick={handleClick}>
+                  {followed ? "UnFollow" : "Follow"}
+                </ButtonFollow>
+              )}
             </ProfileCover>
           </ProfileTop>
           <ProfileBottom>

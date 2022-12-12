@@ -8,6 +8,9 @@ const initialState = {
   authLoading: true,
   isAuthenticated: false,
   user: null,
+  followings: [],
+  followers: [],
+  isAdmin: false,
 };
 
 export const StateContext = createContext(initialState);
@@ -70,9 +73,60 @@ export const ContextProvider = ({ children }) => {
     }
   };
 
+  //signup
+  const signupUser = async (userForm) => {
+    try {
+      const response = await axios.post(`${apiURL}/auth/register`, userForm);
+
+      if (response.data.success) {
+        localStorage.setItem(LOCAL_STORAGE_TOKEN, response.data.accessToken);
+      }
+
+      await loadingUser();
+
+      return response.data;
+    } catch (err) {
+      if (err.response.data) {
+        return err.response.data;
+      } else {
+        return {
+          success: false,
+          message: err.message,
+        };
+      }
+    }
+  };
+
+  //logout
+  const logoutUser = () => {
+    localStorage.removeItem(LOCAL_STORAGE_TOKEN);
+    dispatch({
+      type: "SET_AUTH",
+      payload: { isAuthenticated: false, user: null },
+    });
+  };
+
+  const follow = (userId) => {
+    dispatch({
+      type: "FOLLOW",
+      payload: userId,
+    });
+  };
+
+  const unFollow = (userId) => {
+    dispatch({
+      type: "UN_FOLLOW",
+      payload: userId,
+    });
+  };
+
   const authContextData = {
     loginUser,
     state,
+    follow,
+    unFollow,
+    signupUser,
+    logoutUser,
   };
 
   return (

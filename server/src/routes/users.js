@@ -8,5 +8,6 @@ router.delete("/:id", verifyToken, UserController.delete);
 router.get("/", verifyToken, UserController.get);
 router.put("/:id/follow", UserController.followUser);
 router.put("/:id/unfollow", UserController.unFollowUser);
+router.get("/friend/:userId", UserController.getFriends);
 
 module.exports = router;

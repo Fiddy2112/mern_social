@@ -169,6 +169,33 @@ class UserController {
       res.status(403).json("You can't unfollow yourself");
     }
   }
+
+  async getFriends(req, res) {
+    try {
+      const user = await User.findById(req.params.userId);
+      const friends = await Promise.all(
+        user.followings.map((friend) => {
+          return User.findById(friend);
+        })
+      );
+      let friendList = [];
+      friends.map((friend) => {
+        const { _id, username, profileImg } = friend;
+        friendList.push({ _id, username, profileImg });
+      });
+      res.status(200).json({
+        success: true,
+        message: "Has been friend list",
+        friendList,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  }
 }
 
 module.exports = new UserController();

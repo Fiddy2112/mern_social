@@ -35,7 +35,7 @@ const Loader = styled.div`
 
 function App() {
   const {
-    state: { authLoading, isAuthenticated },
+    state: { authLoading, isAuthenticated, user },
   } = useContext(StateContext);
 
   if (authLoading) {
@@ -63,7 +63,9 @@ function App() {
         />
         <Route
           path="/profile/:username"
-          element={isAuthenticated ? <Profile /> : <Navigate to="/login" />}
+          element={
+            isAuthenticated ? <Profile user={user} /> : <Navigate to="/login" />
+          }
         />
       </Routes>
     </BrowserRouter>

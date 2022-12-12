@@ -15,6 +15,26 @@ const reducer = (state, action) => {
         user,
       };
 
+    case "FOLLOW":
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          followings: [...state.user.followings, action.payload],
+        },
+      };
+
+    case "UN_FOLLOW":
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          followings: state.user.following.filter(
+            (following) => following !== action.payload
+          ),
+        },
+      };
+
     default:
       return state;
   }

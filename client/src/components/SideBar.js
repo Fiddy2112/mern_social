@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import RssFeedOutlinedIcon from "@mui/icons-material/RssFeedOutlined";
@@ -8,6 +8,8 @@ import PlayCircleFilledOutlinedIcon from "@mui/icons-material/PlayCircleFilledOu
 import EmojiEventsOutlinedIcon from "@mui/icons-material/EmojiEventsOutlined";
 import { Users } from "../data/Data";
 import Friend from "./Friend";
+import { StateContext } from "../context/contextProvider";
+import axios from "axios";
 
 const SideBarContainer = styled.div`
   flex: 1;
@@ -57,14 +59,17 @@ const Text = styled.span`
   font-weight: 500;
 `;
 
-const SideBarButton = styled.button`
+const SideBarButton = styled.a`
   padding: 10px 40px;
+  margin: 10px;
   font-size: 16px;
   font-weight: 500;
   border: 1px solid #ff6b81;
   color: #ff6b81;
   background-color: #fff;
   border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
   &:hover {
     background-color: #ff6b81;
     color: #fff;
@@ -74,7 +79,7 @@ const SideBarButton = styled.button`
 const SideBarHR = styled.hr`
   border: none;
   border-top: 0.5px solid #dfe4ea;
-  margin: 10px 0px;
+  margin: 30px 0px;
 `;
 
 const SideBarFriendList = styled.ul`
@@ -82,6 +87,27 @@ const SideBarFriendList = styled.ul`
 `;
 
 function SideBar() {
+  const [listFriend, setListFriend] = useState([]);
+
+  const {
+    state: { user },
+    logoutUser,
+  } = useContext(StateContext);
+
+  useEffect(() => {
+    const getFriends = async () => {
+      const res = await axios.get(
+        `http://localhost:5000/api/v1/user/friend/${user._id}`
+      );
+
+      setListFriend(res.data.friendList);
+    };
+    getFriends();
+  }, [user._id]);
+
+  const logout = () => {
+    logoutUser();
+  };
   return (
     <SideBarContainer>
       <SideBarWrapper>
@@ -128,11 +154,13 @@ function SideBar() {
             <Text>Events</Text>
           </SideBarListItem>
         </SideBarList>
-        <SideBarButton>More ...</SideBarButton>
+        <SideBarButton href="/login" onCLick={logout}>
+          Log out
+        </SideBarButton>
         <SideBarHR />
         <SideBarFriendList>
-          {Users.map((user) => (
-            <Friend user={user} key={user.id} />
+          {listFriend.map((friend) => (
+            <Friend friend={friend} key={friend._id} />
           ))}
         </SideBarFriendList>
       </SideBarWrapper>

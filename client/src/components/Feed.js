@@ -30,7 +30,11 @@ function Feed() {
       const response = await axios.get(
         `http://localhost:5000/api/v1/post/timeline/${user._id}`
       );
-      setPosts(response.data);
+      setPosts(
+        response.data.sort((a, b) => {
+          return new Date(b.createAt) - new Date(a.createAt);
+        })
+      );
     };
     getPosts();
   }, []);

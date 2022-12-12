@@ -10,7 +10,7 @@ import { useRef } from "react";
 
 const StatusPostContainer = styled.div`
   width: 100%;
-  height: 150px;
+  // height: 150px;
   border-radius: 10px;
   box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
   -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
@@ -98,6 +98,21 @@ const StatusPostText = styled.label`
   cursor: pointer;
 `;
 
+const ShareImgContainer = styled.div`
+  padding: 0 20px 10px 20px;
+  position: relative;
+`;
+const ShareImg = styled.img`
+  width: 100%;
+  object-fit: cover;
+`;
+
+const ShareCancelImg = styled.span`
+  position: absolute;
+  top: 0;
+  right: 20px;
+`;
+
 function StatusPost() {
   const {
     state: { user },
@@ -121,6 +136,7 @@ function StatusPost() {
       newPost.img = fileName;
       try {
         await axios.post("http://localhost:5000/api/v1/upload", data);
+        window.location.reload();
       } catch (err) {
         console.log(err);
       }
@@ -135,6 +151,12 @@ function StatusPost() {
 
   return (
     <StatusPostContainer>
+      {file && (
+        <ShareImgContainer>
+          <ShareImg src={URL.createObjectURL(file)} alt="" />
+          <ShareCancelImg>X</ShareCancelImg>
+        </ShareImgContainer>
+      )}
       <StatusPostWrapper onSubmit={handleSubmit}>
         <StatusPostTop>
           <StatusPostImg

@@ -1,4 +1,6 @@
-import React, { useContext } from "react";
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { StateContext } from "../context/contextProvider";
 
@@ -60,9 +62,24 @@ const ProfileFollowingName = styled.span`
 `;
 
 function ProfileInfo() {
+  const [listFriend, setListFriend] = useState([]);
+
   const {
     state: { user },
   } = useContext(StateContext);
+
+  useEffect(() => {
+    const getFriends = async () => {
+      const res = await axios.get(
+        `http://localhost:5000/api/v1/user/friend/${user._id}`
+      );
+
+      setListFriend(res.data.friendList);
+    };
+    getFriends();
+  }, [user._id]);
+
+  console.log(listFriend);
   return (
     <ProfileInfoContainer>
       <ProfileInfoWrapper>
@@ -92,25 +109,21 @@ function ProfileInfo() {
       <ProfileInfoWrapper>
         <ProfileInfoTitle>Friends</ProfileInfoTitle>
         <ProfileFollowings>
-          <ProfileFollowing>
-            <ProfileFollowingImg src="assets/person/person6.jpeg" alt="" />
-            <ProfileFollowingName>John Carter</ProfileFollowingName>
-          </ProfileFollowing>
-
-          <ProfileFollowing>
-            <ProfileFollowingImg src="assets/person/person6.jpeg" alt="" />
-            <ProfileFollowingName>John Carter</ProfileFollowingName>
-          </ProfileFollowing>
-
-          <ProfileFollowing>
-            <ProfileFollowingImg src="assets/person/person6.jpeg" alt="" />
-            <ProfileFollowingName>John Carter</ProfileFollowingName>
-          </ProfileFollowing>
-
-          <ProfileFollowing>
-            <ProfileFollowingImg src="assets/person/person6.jpeg" alt="" />
-            <ProfileFollowingName>John Carter</ProfileFollowingName>
-          </ProfileFollowing>
+          {listFriend.map((friend) => (
+            <Link
+              to={`/profile/${friend.username}`}
+              style={{
+                textDecoration: "none",
+                color: "#2f3542",
+                textAlign: "center",
+              }}
+            >
+              <ProfileFollowing key={friend._id}>
+                <ProfileFollowingImg src={friend.profileImg} alt="" />
+                <ProfileFollowingName>{friend.username}</ProfileFollowingName>
+              </ProfileFollowing>
+            </Link>
+          ))}
         </ProfileFollowings>
       </ProfileInfoWrapper>
     </ProfileInfoContainer>

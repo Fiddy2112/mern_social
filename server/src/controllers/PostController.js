@@ -177,14 +177,14 @@ class PostController {
 
   async getAllPost(req, res) {
     try {
-      const user = User.findOne({ username: req.params.username });
-      const posts = Post.find({
-        userId: user._id,
-      });
+      const user = await User.findOne({ username: req.params.username });
+      // const posts = await Post.find({
+      //   userId: user._id,
+      // });
       res.status(200).json({
         success: true,
         message: "Your has been get all user",
-        posts,
+        user,
       });
     } catch (err) {
       console.log(err);

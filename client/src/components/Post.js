@@ -140,7 +140,7 @@ function Post({ post }) {
 
   //context
   const {
-    state: { user },
+    state: { user: currentUser },
   } = useContext(StateContext);
 
   // console.log("like", like);
@@ -164,7 +164,7 @@ function Post({ post }) {
   const likeHandler = async () => {
     try {
       await axios.put(`http://localhost:5000/api/v1/post/${post._id}/likes`, {
-        userId: user._id,
+        userId: currentUser._id,
       });
     } catch (err) {}
     setLike(isLiked ? like - 1 : like + 1);
@@ -193,7 +193,7 @@ function Post({ post }) {
         </PostTop>
         <PostCenter>
           <PostText>{post.desc}</PostText>
-          <PostImg src={post?.img || ""} alt="post_img" />
+          {post.img ? <PostImg src={post.img} alt="post_img" /> : ""}
         </PostCenter>
         <PostBottom>
           <PostLike>
@@ -203,7 +203,8 @@ function Post({ post }) {
               ) : (
                 <ThumbUpOutlinedIcon style={{ color: "#1e90ff" }} />
               )}
-              {!isLiked ? "" : "You"} {like}
+              {/* {!isLiked ? "" : "You"}  */}
+              {post.likes.length > 0 ? like + " others" : ""}
             </PostLikeLeft>
             <PostLikeRight>{post.comment} comments</PostLikeRight>
           </PostLike>

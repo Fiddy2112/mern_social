@@ -1,5 +1,8 @@
-import React from "react";
+import axios from "axios";
+import React, { useContext, useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
+import { StateContext } from "../context/contextProvider";
 import { Users } from "../data/Data";
 
 const RightBarContainer = styled.div`
@@ -52,18 +55,36 @@ const RightBarName = styled.span`
 `;
 
 function RightBar() {
+  const [listFriend, setListFriend] = useState([]);
+
+  const {
+    state: { user },
+  } = useContext(StateContext);
+
+  useEffect(() => {
+    const getFriends = async () => {
+      const res = await axios.get(
+        `http://localhost:5000/api/v1/user/friend/${user._id}`
+      );
+
+      setListFriend(res.data.friendList);
+    };
+    getFriends();
+  }, [user._id]);
+
+  console.log(listFriend);
   return (
     <RightBarContainer>
       <RightBarWrapper>
         <RightBarTitle>Contacts</RightBarTitle>
         <RightBarFriendList>
-          {Users.map((user) => (
-            <RightBarFriend key={user.id}>
+          {listFriend.map((friend) => (
+            <RightBarFriend key={friend._id}>
               <RightBarProfileImgContainer>
-                <RightBarProfileImg src={user.profilePicture} alt="userOnl" />
+                <RightBarProfileImg src={friend.profileImg} alt="userOnl" />
                 <RightBarStatus></RightBarStatus>
               </RightBarProfileImgContainer>
-              <RightBarName>{user.username}</RightBarName>
+              <RightBarName>{friend.username}</RightBarName>
             </RightBarFriend>
           ))}
         </RightBarFriendList>

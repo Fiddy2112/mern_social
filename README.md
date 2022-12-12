@@ -16,7 +16,10 @@
   - [Mongoose](https://mongoosejs.com/)
 
 - **Client:**
-  - Coming Soon!
+  - [styled-components](https://www.npmjs.com/package/styled-components/v/4.1.3)
+  - [axios](https://www.npmjs.com/package/axios)
+  - [moment](https://www.npmjs.com/package/moment)
+  - [react-router-dom](https://github.com/remix-run/react-router#readme)
 
 ## Requirements
 

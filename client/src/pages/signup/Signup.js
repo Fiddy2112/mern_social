@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { StateContext } from "../../context/contextProvider";
 
 const SignupContainer = styled.div`
   width: 100vw;
@@ -42,7 +44,7 @@ const SignupRight = styled.div`
   margin-left: 50px;
 `;
 
-const SignupForm = styled.div`
+const SignupForm = styled.form`
   height: 400px;
   padding: 20px;
   background-color: white;
@@ -107,15 +109,75 @@ const LoginButton = styled.a`
   }
 `;
 
+const ErrorText = styled.span`
+  font-size: 25px;
+  color: #ff4757;
+  font-weight: 500;
+`;
+
 function Signup() {
+  //local state
+  const [error, setError] = useState("");
+  const [inputForm, setInputForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const { username, email, password } = inputForm;
+
+  //router
+  const navigate = useNavigate();
+
+  //context
+  const { signupUser } = useContext(StateContext);
+
+  const onChangeRegisterForm = (e) => {
+    setInputForm({
+      ...inputForm,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const registerData = await signupUser(inputForm);
+      if (registerData.success === false) {
+        setError(registerData.message);
+      } else {
+        navigate("/login");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <SignupContainer>
       <SignupWrapper>
         <SignupLeft>
-          <SignupForm>
-            <SignupInput placeholder="Username" />
-            <SignupInput placeholder="Email" />
-            <SignupInput placeholder="Password" />
+          <SignupForm onSubmit={handleSubmit}>
+            <SignupInput
+              placeholder="Username"
+              type="text"
+              id="username"
+              value={username}
+              onChange={onChangeRegisterForm}
+            />
+            <SignupInput
+              placeholder="Email"
+              type="email"
+              id="email"
+              value={email}
+              onChange={onChangeRegisterForm}
+            />
+            <SignupInput
+              placeholder="Password"
+              type="password"
+              id="password"
+              value={password}
+              onChange={onChangeRegisterForm}
+            />
             <SignupButton>Log in</SignupButton>
             <LoginButton href="/login">Your have account</LoginButton>
           </SignupForm>
@@ -123,6 +185,7 @@ function Signup() {
         <SignupRight>
           <SignupLogo>signup</SignupLogo>
           <SignupDesc>It's quick and easy.</SignupDesc>
+          <ErrorText>{error}</ErrorText>
         </SignupRight>
       </SignupWrapper>
     </SignupContainer>
